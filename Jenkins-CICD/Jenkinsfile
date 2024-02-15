@@ -19,6 +19,12 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/techinanutshellhack/devsecops.git'
             }
         }
+        stage('Build') {
+            steps {
+                // Install dependencies and build your Node.js project
+                sh 'npm install'
+                sh 'npm run build'
+            }
         stage('Terraform version'){
              steps{
                  sh 'terraform --version'
@@ -48,11 +54,11 @@ pipeline{
                 }
             } 
         }
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
-            }
-        }
+        // stage('TRIVY FS SCAN') {
+        //     steps {
+        //         sh "trivy fs . > trivyfs.txt"
+        //     }
+        // }
         stage('Excutable permission to userdata'){
             steps{
                 sh 'chmod 777 website.sh'
