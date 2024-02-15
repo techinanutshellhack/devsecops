@@ -25,6 +25,7 @@ pipeline{
                 sh 'npm install'
                 sh 'npm run build'
             }
+        }
         stage('Terraform version'){
              steps{
                  sh 'terraform --version'
