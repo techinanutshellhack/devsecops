@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tetris
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tetris
+  template:
+    metadata:
+      labels:
+        app: tetris
+    spec:
+      containers:
+      - name: tetris
+        image: testcontainers/helloworld
+        ports:
+        - containerPort: 8080   # Use port 3000
