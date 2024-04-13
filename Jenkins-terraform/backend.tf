@@ -3,5 +3,6 @@ terraform {
     bucket = "jenkins-terraform-cicd1" # Replace with your actual S3 bucket name
     key    = "terraform.tfstate"
     region = "eu-north-1"
+    dynamodb_table = "mystate"
   }
 }

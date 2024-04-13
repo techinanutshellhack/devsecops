@@ -40,7 +40,7 @@ pipeline{
                   withSonarQubeEnv('SonarCloud') {
                     sh 'npm install -g sonarqube-scanner'
                     sh 'sonar-scanner \
-                        -Dsonar.projectKey=techinanutshell_tetris-devsecops \
+                        -Dsonar.projectKey=techinanutshell_tetris_devsecops \
                         -Dsonar.organization=techinanutshellhack \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io \
@@ -55,30 +55,57 @@ pipeline{
                 }
             } 
         }
-        // stage('TRIVY FS SCAN') {
-        //     steps {
-        //         sh "trivy fs . > trivyfs.txt"
+        stage('Install Dependencies') {
+            steps {
+                sh "npm install"
+            }
+        }
+        stage('OWASP FS SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
+            }
+        }
+        stage("Docker Build & Push"){
+            steps{
+                script{
+                   withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
+                       sh "docker build -t tetrisv1 ."
+                       sh "docker tag tetrisv1 sweetpeaito/tetrisv1:latest "
+                       sh "docker push sweetpeaito/tetrisv1:latest "
+                    }
+                }
+            }
+        }
+        stage("TRIVY"){
+            steps{
+                sh "trivy image sweetpeaito/tetrisv1:latest > trivyimage.txt" 
+            }
+        }
+        // stage('Excutable permission to userdata'){
+        //     steps{
+        //         sh 'chmod 777 website.sh'
         //     }
         // }
-        stage('Excutable permission to userdata'){
-            steps{
-                sh 'chmod 777 website.sh'
-            }
-        }
-        stage('Terraform init'){
-            steps{
-                sh 'terraform init'
-            }
-        }
-        stage('Terraform plan'){
-            steps{
-                sh 'terraform plan'
-            }
-        }
-        stage('Terraform apply'){
-            steps{
-                sh 'terraform ${action} --auto approve'
-            }
-        }
+        // stage('Terraform init'){
+        //     steps{
+        //         sh 'terraform init'
+        //     }
+        // }
+        // stage('Terraform plan'){
+        //     steps{
+        //         sh 'terraform plan'
+        //     }
+        // }
+        // stage('Terraform apply'){
+        //     steps{
+        //         sh 'terraform ${action} --auto approve'
+        //     }
+        // }
     }
 }
