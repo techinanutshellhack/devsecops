@@ -1,5 +1,5 @@
-resource "aws_iam_role" "example_role" {
-  name = "Jenkins-terraform"
+resource "aws_iam_role" "jenkins_terraform" {
+  name = "jenkins_terraform"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -17,14 +17,14 @@ EOF
 }
 
 
-resource "aws_iam_role_policy_attachment" "example_attachment" {
-  role       = aws_iam_role.example_role.name
+resource "aws_iam_role_policy_attachment" "jenkins_terraform_attachment" {
+  role       = aws_iam_role.jenkins_terraform.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-resource "aws_iam_instance_profile" "example_profile" {
-  name = "Jenkins-terraform"
-  role = aws_iam_role.example_role.name
+resource "aws_iam_instance_profile" "terraform_profile" {
+  name = "terraform_profile1"
+  role = aws_iam_role.jenkins_terraform.name
 }
 
 resource "aws_security_group" "Jenkins-sg" {
@@ -57,14 +57,18 @@ resource "aws_security_group" "Jenkins-sg" {
     Name = "Jenkins-sg"
   }
 }
+#create lunch template
+#create auto-scalling group
+#attach ecu to auto scaling group
+
 
 resource "aws_instance" "web" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
-  key_name               = "jenkins"
+  key_name               = "jenkins_terraform"
   vpc_security_group_ids = [aws_security_group.Jenkins-sg.id]
   user_data              = templatefile("./install_jenkins.sh", {})
-  iam_instance_profile   = aws_iam_instance_profile.example_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.terraform_profile.name
 
   tags = {
     Name = "Jenkins Server"
@@ -75,15 +79,15 @@ resource "aws_instance" "web" {
   }
 }
 # resource "aws_dynamodb_table" "terraform-lock" {
-#     name           = "terraform_state"
-#     read_capacity  = 5
-#     write_capacity = 5
-#     hash_key       = "LockID"
-#     attribute {
-#         name = "LockID"
-#         type = "S"
-#     }
-#     tags = {
-#         "Name" = "DynamoDB Terraform State Lock Table"
-#     }
-# }
+#      name           = "terraform_state"
+#      read_capacity  = 5
+#      write_capacity = 5
+#      hash_key       = "LockID"
+#      attribute {
+#          name = "LockID"
+#          type = "S"
+#      }
+#      tags = {
+#          "Name" = "DynamoDB Terraform State Lock Table"
+#      }
+#  }
