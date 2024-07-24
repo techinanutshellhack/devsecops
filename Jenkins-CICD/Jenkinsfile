@@ -10,7 +10,7 @@ pipeline{
     tools{
         jdk 'jdk17'
         terraform 'terraform'
-        nodejs 'NodeJS 16.2.0'
+        nodejs 'node16'
     }
     stages{
         stage('clean Workspace'){
