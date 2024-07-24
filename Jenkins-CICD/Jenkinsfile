@@ -35,13 +35,13 @@ pipeline{
                 }
             }
         }
-        stage('Build') {
-            steps {
-                // build your Node.js project
+        // stage('Build') {
+        //     steps {
+        //         // build your Node.js project
                
-                sh 'npm run build'
-            }
-        }
+        //         sh 'npm run build'
+        //     }
+        // }
         stage('Terraform version'){
              steps{
                  sh 'terraform --version'
