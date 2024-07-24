@@ -31,7 +31,7 @@ pipeline{
                     sh 'npm -v'
                     
                     // Install npm dependencies
-                    sh 'npm install'
+                    // sh 'npm install'
                 }
             }
         }
